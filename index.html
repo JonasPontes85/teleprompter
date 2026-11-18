@@ -92,7 +92,7 @@ body{display:flex;flex-direction:column}
 </head>
 <body>
 <main id="home" class="scr">
-<header><button class="ic" id="bk2" hidden>←</button><img id="lg" src="icon-192.png" width="38" height="38" style="border-radius:10px" alt=""><h1><span id="hd">Teleprompter</span> <small class="mu" id="vr">v2.1</small></h1><button class="ic" id="nf">📁</button><button class="ic" id="sq">🔍</button><button class="ic" id="mn">⋮</button></header>
+<header><button class="ic" id="bk2" hidden>←</button><img id="lg" src="icon-192.png" width="38" height="38" style="border-radius:10px" alt=""><h1><span id="hd">Teleprompter</span> <small class="mu" id="vr">v2.2</small></h1><button class="ic" id="nf">📁</button><button class="ic" id="sq">🔍</button><button class="ic" id="mn">⋮</button></header>
 <input id="q" placeholder="Buscar roteiro…" hidden>
 <div class="row" style="padding:2px 4px"><button class="ic" id="so" style="font-size:16px;border-radius:12px">Data ↓</button><button class="ic" id="gv">☰</button></div>
 <div id="list"></div>
@@ -121,7 +121,7 @@ body{display:flex;flex-direction:column}
 <div class="row"><span>Cor do texto</span><span class="sw" id="cols"></span></div>
 <div class="row"><span>Modo de voz</span><select data-k="vm"><option value="level">Rolar enquanto falo (recomendado)</option><option value="words">Acompanhar palavras (experimental)</option></select></div>
 <div class="row"><span>Sensibilidade do microfone</span><input type="range" data-k="th" min="1" max="38"><b data-v="th"></b></div>
-<h3>VÍDEO</h3><div class="row"><span>Espelhar câmera frontal</span><input type="checkbox" data-k="cm"></div><div class="row"><span>Qualidade</span><select data-k="vq"><option value="1080">Full HD 1080p</option><option value="720">HD 720p</option><option value="480">SD 480p</option></select></div><div class="row"><span>Proporção</span><select data-k="ar"><option value="169">16:9</option><option value="43">4:3</option><option value="1">1:1</option></select></div>
+<h3>VÍDEO</h3><div class="row"><span>Espelhar câmera frontal (prévia e vídeo)</span><input type="checkbox" data-k="cm"></div><div class="row"><span>Qualidade</span><select data-k="vq"><option value="1080">Full HD 1080p</option><option value="720">HD 720p</option><option value="480">SD 480p</option></select></div><div class="row"><span>Proporção</span><select data-k="ar"><option value="169">16:9</option><option value="43">4:3</option><option value="1">1:1</option></select></div>
 <h3>TEXTO</h3>
 <div class="row"><span>Espelhar horizontal</span><input type="checkbox" data-k="mh"></div>
 <div class="row"><span>Espelhar vertical</span><input type="checkbox" data-k="mv"></div>
@@ -135,7 +135,7 @@ body{display:flex;flex-direction:column}
 <p class="mu" id="lk" style="margin:0"></p>
 <h3>CONTROLE BLUETOOTH / TECLADO</h3>
 <p class="mu" style="margin:0">Controles que funcionam como teclado: Enter, Espaço ou Play/Pause = pausar · PageUp ou ↑ = mais rápido · PageDown ou ↓ = mais lento · ← → = fonte · Home = voltar ao início · Esc = sair. Teclas de volume não podem ser lidas pelo navegador.</p>
-<button class="b" id="upd">🔄 Atualizar app (versão 2.1)</button>
+<button class="b" id="upd">🔄 Atualizar app (versão 2.2)</button>
 </div></div>
 
 <div id="rm" hidden>
@@ -150,6 +150,7 @@ body{display:flex;flex-direction:column}
 </div>
 
 <div id="rv" hidden><div class="sheet"><b style="font-size:18px">🎬 Gravação pronta</b><span class="mu" id="rvi"></span>
+<video id="rvv" controls playsinline style="width:100%;max-height:45vh;border-radius:12px;background:#000"></video>
 <button class="pri" id="rvs">💾 Salvar vídeo</button><button class="b" id="rvk">Guardar em Gravações</button><button class="b" id="rvd">Descartar</button></div></div>
 
 <div id="mm" hidden><div class="sheet"><b id="mmt"></b><div id="mmb" style="display:grid;gap:12px"></div></div></div>
@@ -179,7 +180,7 @@ function save(){try{localStorage.setItem("tp",JSON.stringify(S))}catch(e){}}
 function toast(m){let t=$("ts");if(!t){t=document.createElement("div");t.id="ts";t.style.cssText="position:fixed;left:12px;right:12px;top:calc(12px + env(safe-area-inset-top,0px));z-index:99;background:#222;color:#fff;border:1px solid #6a00ff;border-radius:14px;padding:12px 14px;font-size:14px;text-align:center";document.body.append(t)}t.textContent=m;t.hidden=false;clearTimeout(t.h);t.h=setTimeout(()=>t.hidden=true,7000)}
 window.alert=toast;
 const esc=s=>s.replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));
-let lrid=null,vv=0,vfail=false,fsOn=false,ac=null,an=null,vad=false,vt=0,vst=null,rec=null,tgt=0,wi=0,W=[],stream=null,mr=null,ch=[],cur=null,RM=null,pos=0,max=0,playing=false,last=0,raf=0,hideT=0,wl=null,blob=null,ext="webm",stI=0;
+let cvr=0,hv=null,lrid=null,vv=0,vfail=false,fsOn=false,ac=null,an=null,vad=false,vt=0,vst=null,rec=null,tgt=0,wi=0,W=[],stream=null,mr=null,ch=[],cur=null,RM=null,pos=0,max=0,playing=false,last=0,raf=0,hideT=0,wl=null,blob=null,ext="webm",stI=0;
 const pr=$("pr"),txt=$("txt"),cs=()=>S.lib.find(x=>x.id===cur);
 const wc=t=>(t.match(/\S+/g)||[]).length;
 const mins=w=>{const m=w/150;return Math.floor(m)+"min"+String(Math.round(m%1*60)).padStart(2,"0")+"s"};
@@ -205,7 +206,7 @@ function sync(){
  document.querySelectorAll("[data-k]").forEach(e=>{const v=S[e.dataset.k];if(e.type==="checkbox")e.checked=v;else e.value=v;const b=document.querySelector(`[data-v="${e.dataset.k}"]`);if(b)b.textContent=v});
  [...$("cols").children].forEach(b=>b.style.outline=b.dataset.c===S.col?"3px solid var(--ac)":"none");
  $("cRec").classList.toggle("on",S.rec);$("cCam").classList.toggle("on",S.cam);$("cVz").classList.toggle("on",S.vz);
- $("code").value=S.code||"";$("pv").textContent=S.spd;
+ $("code").value=S.code||"";$("cv").style.transform=S.cm&&S.fc!=="environment"?"scaleX(-1)":"none";$("pv").textContent=S.spd;
 }
 document.querySelectorAll("[data-k]").forEach(e=>e.oninput=()=>{const k=e.dataset.k;S[k]=e.type==="checkbox"?e.checked:e.type==="range"?+e.value:e.value;save();sync()});
 $("cols").innerHTML=COLS.map(c=>`<button data-c="${c}" style="background:${c}"></button>`).join("");
@@ -279,9 +280,9 @@ async function media(){
 function startRec(){
  if(!window.MediaRecorder||!stream)return;
    ch=[];const mt=["video/webm;codecs=vp9,opus","video/webm","video/mp4"].find(t=>MediaRecorder.isTypeSupported(t));
-   mr=new MediaRecorder(stream,mt?{mimeType:mt}:undefined);
+   mr=new MediaRecorder(recStream(),mt?{mimeType:mt}:undefined);
    mr.ondataavailable=e=>{if(e.data.size)ch.push(e.data)};
-   mr.onstop=()=>{if(!ch.length){alert("Nada foi gravado. Verifique as permissões de câmera e microfone.");return}ext=(mr.mimeType||"").includes("mp4")?"mp4":"webm";blob=new Blob(ch,{type:mr.mimeType||"video/webm"});lrid=Date.now();putRec({id:lrid,d:lrid,n:"gravacao-"+new Date().toISOString().slice(0,16).replace(/[:T]/g,"-"),e:ext,b:blob}).catch(()=>{});$("rvi").textContent="Tamanho: "+(blob.size/1048576).toFixed(1)+" MB";$("rv").hidden=false};
+   mr.onstop=()=>{cancelAnimationFrame(cvr);if(hv){hv.remove();hv=null}if(!ch.length){alert("Nada foi gravado. Verifique as permissões de câmera e microfone.");return}ext=(mr.mimeType||"").includes("mp4")?"mp4":"webm";blob=new Blob(ch,{type:mr.mimeType||"video/webm"});lrid=Date.now();putRec({id:lrid,d:lrid,n:"gravacao-"+new Date().toISOString().slice(0,16).replace(/[:T]/g,"-"),e:ext,b:blob}).catch(()=>{});$("rvi").textContent="Assista antes de decidir · "+(blob.size/1048576).toFixed(1)+" MB";$("rvv").src=URL.createObjectURL(blob);$("rv").hidden=false};
    mr.start(1000);
 }
 function camOff(){try{if(stream)stream.getTracks().forEach(t=>t.stop())}catch(e){}stream=null;$("cv").style.display="none"}
@@ -355,15 +356,15 @@ $("go").onclick=start;$("ex").onclick=exit;$("bk").onclick=reset;$("vs").onclick
 $("pp").onclick=()=>setPlay(!playing);
 
 $("fm").onclick=()=>fnt(-4);$("fp").onclick=()=>fnt(4);
-$("rvd").onclick=()=>{blob=null;ch=[];if(lrid)delRec(lrid).catch(()=>{});$("rv").hidden=true};
-$("rvk").onclick=()=>$("rv").hidden=true;
+$("rvd").onclick=()=>{blob=null;ch=[];if(lrid)delRec(lrid).catch(()=>{});closeRv()};
+$("rvk").onclick=()=>closeRv();
 $("rvs").onclick=async()=>{
  const fn="gravacao-"+new Date().toISOString().slice(0,16).replace(/[:T]/g,"-")+"."+ext;
  try{
   const d=window.claude?await claude.use("downloads"):null;
   if(d)await d.save({filename:fn,data:blob});
   else{const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=fn;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),60000)}
-  $("rv").hidden=true;
+  closeRv();
  }catch(e){alert("O arquivo não foi salvo ("+(e.code||e.name||"erro")+"). Tente novamente.")}
 };
 let sy=null,moved=false;
@@ -477,6 +478,17 @@ $("hnd").addEventListener("pointermove",e=>{if(!dg)return;
  else{S.bx.h=Math.max(20,Math.min(100-S.bx.t,b.h+dy));if(dg.k==="l")S.bx.l=Math.min(70,c(b.l+dx));else S.bx.r=Math.min(70,c(b.r-dx))}
  applyBox()});
 $("hnd").addEventListener("pointerup",()=>{if(dg){dg=null;save();layout();draw()}});
+
+function closeRv(){const v=$("rvv");v.pause();try{URL.revokeObjectURL(v.src)}catch(e){}v.removeAttribute("src");v.load();$("rv").hidden=true}
+function recStream(){
+ if(!(S.cm&&S.fc!=="environment")||!stream.getVideoTracks().length||!HTMLCanvasElement.prototype.captureStream)return stream;
+ const st=stream.getVideoTracks()[0].getSettings();
+ hv=document.createElement("video");hv.muted=true;hv.playsInline=true;hv.srcObject=stream;
+ hv.style.cssText="position:fixed;left:-9999px;width:2px;height:2px";document.body.append(hv);hv.play().catch(()=>{});
+ const c=document.createElement("canvas");c.width=st.width||1280;c.height=st.height||720;const x=c.getContext("2d");
+ const dr=()=>{const vw=hv.videoWidth,vh=hv.videoHeight;if(vw&&(c.width!==vw||c.height!==vh)){c.width=vw;c.height=vh}
+  x.save();x.scale(-1,1);x.drawImage(hv,-c.width,0,c.width,c.height);x.restore();cvr=requestAnimationFrame(dr)};dr();
+ const o=c.captureStream(30);stream.getAudioTracks().forEach(t=>o.addTrack(t));return o}
 sync();renderHome();show("home");
 if(!window.claude){["code","lp","lc","lk"].forEach(i=>$(i).hidden=true);const p=$("code").previousElementSibling;p.hidden=true;p.previousElementSibling.hidden=true}
 if("serviceWorker"in navigator&&location.protocol.startsWith("http"))navigator.serviceWorker.register("sw.js").catch(()=>{});
