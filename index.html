@@ -92,7 +92,7 @@ body{display:flex;flex-direction:column}
 </head>
 <body>
 <main id="home" class="scr">
-<header><button class="ic" id="bk2" hidden>←</button><img id="lg" src="icon-192.png" width="38" height="38" style="border-radius:10px" alt=""><h1><span id="hd">Teleprompter</span> <small class="mu" id="vr">v2.4</small></h1><button class="ic" id="nf">📁</button><button class="ic" id="sq">🔍</button><button class="ic" id="mn">⋮</button></header>
+<header><button class="ic" id="bk2" hidden>←</button><img id="lg" src="icon-192.png" width="38" height="38" style="border-radius:10px" alt=""><h1><span id="hd">Teleprompter</span> <small class="mu" id="vr">v2.5</small></h1><button class="ic" id="nf">📁</button><button class="ic" id="sq">🔍</button><button class="ic" id="mn">⋮</button></header>
 <input id="q" placeholder="Buscar roteiro…" hidden>
 <div class="row" style="padding:2px 4px"><button class="ic" id="so" style="font-size:16px;border-radius:12px">Data ↓</button><button class="ic" id="gv">☰</button></div>
 <div id="list"></div>
@@ -135,7 +135,7 @@ body{display:flex;flex-direction:column}
 <p class="mu" id="lk" style="margin:0"></p>
 <h3>CONTROLE BLUETOOTH / TECLADO</h3>
 <p class="mu" style="margin:0">Controles que funcionam como teclado: Enter, Espaço ou Play/Pause = pausar · PageUp ou ↑ = mais rápido · PageDown ou ↓ = mais lento · ← → = fonte · Home = voltar ao início · Esc = sair. Teclas de volume não podem ser lidas pelo navegador.</p>
-<button class="b" id="upd">🔄 Atualizar app (versão 2.4)</button>
+<button class="b" id="upd">🔄 Atualizar app (versão 2.5)</button>
 </div></div>
 
 <div id="rm" hidden>
@@ -177,7 +177,7 @@ if(!S.v3){S.vm="level";S.v3=1}
 if(S.text){S.lib.unshift({id:"m"+Date.now(),t:S.text.trim().split("\n")[0].slice(0,32),x:S.text});delete S.text}
 S.lib.forEach((x,i)=>{if(!x.id)x.id="i"+i+Date.now()});
 function save(){try{localStorage.setItem("tp",JSON.stringify(S))}catch(e){}}
-function toast(m){let t=$("ts");if(!t){t=document.createElement("div");t.id="ts";t.style.cssText="position:fixed;left:12px;right:12px;top:calc(12px + env(safe-area-inset-top,0px));z-index:99;background:#222;color:#fff;border:1px solid #6a00ff;border-radius:14px;padding:12px 14px;font-size:14px;text-align:center";document.body.append(t)}t.textContent=m;t.hidden=false;clearTimeout(t.h);t.h=setTimeout(()=>t.hidden=true,7000)}
+function toast(m){let t=$("ts");if(!t){t=document.createElement("div");t.id="ts";t.style.cssText="position:fixed;left:12px;right:12px;top:calc(12px + env(safe-area-inset-top,0px));z-index:99;background:#222;color:#fff;border:1px solid #6a00ff;border-radius:14px;padding:12px 14px;font-size:14px;text-align:center";}(document.fullscreenElement||document.body).append(t);t.textContent=m;t.hidden=false;clearTimeout(t.h);t.h=setTimeout(()=>t.hidden=true,7000)}
 window.alert=toast;
 const esc=s=>s.replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));
 let ready=false,cdI=0,cvr=0,hv=null,lrid=null,vv=0,vfail=false,fsOn=false,ac=null,an=null,vad=false,vt=0,vst=null,rec=null,tgt=0,wi=0,W=[],stream=null,mr=null,ch=[],cur=null,RM=null,pos=0,max=0,playing=false,last=0,raf=0,hideT=0,wl=null,blob=null,ext="webm",stI=0;
@@ -223,7 +223,7 @@ $("q").oninput=renderHome;
 $("b0").onclick=()=>{const s=cs();if(!s.t.trim())s.t=s.x.trim().split("\n")[0].slice(0,32);save();renderHome();show("home")};
 $("ttl").oninput=e=>{cs().t=e.target.value;save()};
 $("src").oninput=e=>{cs().x=e.target.value;save();stats()};
-$("mn").onclick=$("s0").onclick=()=>$("sh").hidden=false;
+$("mn").onclick=$("s0").onclick=openSet;
 $("shx").onclick=()=>$("sh").hidden=true;
 $("sh").onclick=e=>{if(e.target.id==="sh")$("sh").hidden=true};
 
@@ -366,10 +366,10 @@ $("rvs").onclick=async()=>{
  }catch(e){alert("O arquivo não foi salvo ("+(e.code||e.name||"erro")+"). Tente novamente.")}
 };
 let sy=null,moved=false;
-pr.addEventListener("pointerdown",e=>{if(e.target.closest("#ctl,#hnd"))return;sy=e.clientY;moved=false});
+pr.addEventListener("pointerdown",e=>{if(e.target.closest("#ctl,#hnd,#sh"))return;sy=e.clientY;moved=false});
 pr.addEventListener("pointermove",e=>{if(sy===null)return;const d=sy-e.clientY;if(Math.abs(d)>4){moved=true;pos=Math.max(0,Math.min(max,pos+(S.mv?-d:d)));tgt=pos;sy=e.clientY;draw()}});
 pr.addEventListener("pointerup",()=>{if(sy!==null&&!moved)togglePlay();sy=null});
-pr.addEventListener("wheel",e=>{pos=Math.max(0,Math.min(max,pos+e.deltaY));tgt=pos;draw()});
+pr.addEventListener("wheel",e=>{if(e.target.closest("#sh"))return;pos=Math.max(0,Math.min(max,pos+e.deltaY));tgt=pos;draw()});
 addEventListener("resize",()=>{if(pr.style.display==="block"){layout();draw()}});
 document.addEventListener("fullscreenchange",()=>{if(document.fullscreenElement)fsOn=true;else if(fsOn&&pr.style.display==="block"){fsOn=false;exit()}});
 
@@ -434,7 +434,7 @@ $("mm").onclick=e=>{const a=e.target.dataset.a;if(!a&&e.target.id!=="mm")return;
  else if(a==="fdel"){S.lib.forEach(x=>{if(x.f===mid)x.f=null});S.fo=S.fo.filter(f=>f.id!==mid);save();renderHome()}};
 $("so").onclick=()=>{S.so=S.so==="a"?"d":"a";save();renderHome()};
 $("gv").onclick=()=>{S.gv=!S.gv;save();renderHome()};
-$("nav").onclick=e=>{const b=e.target.closest("[data-t]");if(!b)return;const t=b.dataset.t;if(t==="set"){$("sh").hidden=false;return}if(t==="recs")renderRecs();else renderHome();show(t)};
+$("nav").onclick=e=>{const b=e.target.closest("[data-t]");if(!b)return;const t=b.dataset.t;if(t==="set"){openSet();return}if(t==="recs")renderRecs();else renderHome();show(t)};
 const IDB=()=>new Promise((ok,no)=>{const r=indexedDB.open("tp",1);r.onupgradeneeded=()=>r.result.createObjectStore("rec",{keyPath:"id"});r.onsuccess=()=>ok(r.result);r.onerror=()=>no(r.error)});
 async function rdb(m,fn){const d=await IDB();return new Promise((ok,no)=>{const t=d.transaction("rec",m),q=fn(t.objectStore("rec"));t.oncomplete=()=>ok(q&&q.result);t.onerror=()=>no(t.error)})}
 const putRec=r=>rdb("readwrite",s=>s.put(r)),allRec=()=>rdb("readonly",s=>s.getAll()),delRec=id=>rdb("readwrite",s=>s.delete(id));
@@ -459,7 +459,7 @@ async function toggleRec(){
 $("rc2").onclick=toggleRec;
 $("lay").onclick=()=>{S.cam=!S.cam;save();sync();if(S.cam&&!stream)media();else $("cv").style.display=S.cam&&stream&&stream.getVideoTracks().length?"block":"none"};
 $("bri").onclick=()=>{const a=[.2,.35,.55,.8];S.co=a[(a.indexOf(S.co)+1)%4]||.35;save();$("cv").style.opacity=S.co};
-$("st2").onclick=()=>$("sh").hidden=false;
+$("st2").onclick=openSet;
 
 /* ---------- v2.1: nova pasta, girar, virar câmera, caixa ---------- */
 $("bk2").onclick=()=>{cfo=null;renderHome()};
@@ -500,6 +500,7 @@ function countdown(n,cb){
 function startFirst(){countdown(+S.cs,()=>{ready=false;if(S.rec&&stream&&stream.getAudioTracks().length&&!(mr&&mr.state==="recording"))startRec();begin()})}
 function togglePlay(){if($("cd").style.display==="flex")return;if(ready&&!playing)startFirst();else setPlay(!playing)}
 $("cd").onclick=()=>{clearInterval(cdI);$("cd").style.display="none"};
+function openSet(){(pr.style.display==="block"?pr:document.body).append($("sh"));$("sh").hidden=false}
 sync();renderHome();show("home");
 if(!window.claude){["code","lp","lc","lk"].forEach(i=>$(i).hidden=true);const p=$("code").previousElementSibling;p.hidden=true;p.previousElementSibling.hidden=true}
 if("serviceWorker"in navigator&&location.protocol.startsWith("http"))navigator.serviceWorker.register("sw.js").catch(()=>{});
